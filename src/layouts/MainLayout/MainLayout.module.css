@@ -1,0 +1,19 @@
+.layoutContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.outletContainer {
+    flex: 1;
+    overflow: auto;
+}

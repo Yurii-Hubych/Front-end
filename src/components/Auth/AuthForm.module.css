@@ -1,0 +1,132 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+}
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 350px;
+}
+
+.container form input {
+    padding-left: 5px;
+    font-size: 1rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    outline: none;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #ccc;
+}
+
+.container form input::placeholder {
+    color: #ccc;
+}
+
+.container form input::placeholder {
+}
+
+.container form input:focus,
+.container form input:active {
+    border-bottom: 1px solid #000;
+}
+
+.container form input:focus::placeholder,
+.container form input:active::placeholder {
+    color: #000;
+}
+
+.error-message {
+    padding: 0;
+    position: absolute;
+    color: red;
+    font-size: 0.8rem;
+    top: 30px;
+}
+
+.input-container {
+    width: 100%;
+    position: relative;
+    padding-bottom: 40px;
+    display: flex;
+}
+
+.input-container svg {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.error-message p {
+    margin: 0;
+    padding: 0;
+}
+
+.auth-forms-container {
+    display: flex;
+    flex-direction: row;
+    padding: 0 90px 0 90px;
+    justify-content: space-between;
+    width: 950px;
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+}
+
+.image-container {
+    margin-top: 60px;
+}
+
+.submit-button {
+    background-color: #000;
+    color: #fff;
+    font-size: 1rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    padding: 10px 0 10px 0;
+    border: none;
+    border-radius: 5px;
+    width: 50%;
+    margin-top: 20px;;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: rgb(77, 65, 23);
+}
+
+.form-right-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.already-exists-or-new-user-text {
+    color: #000;
+    font-size: 1rem;
+    margin: 0;
+    cursor: pointer;
+    border-bottom: black 1px solid;
+    display: inline;
+    width: max-content;
+}
+
+.already-exists-or-new-user-text:hover {
+    color: rgb(77, 65, 23);
+    border-bottom: rgb(77, 65, 23) 1px solid;
+}
+
+/*.input-error {
+    color: red;
+    border-bottom: 1px solid red;
+}*/
+

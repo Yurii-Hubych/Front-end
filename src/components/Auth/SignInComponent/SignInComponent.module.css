@@ -1,0 +1,16 @@
+.forgot-password-text {
+    color: #000;
+    font-size: 0.8rem;
+    margin: 0;
+    cursor: pointer;
+    border-bottom: black 1px solid;
+    display: inline;
+    width: max-content;
+}
+
+.forgot-password-text:hover {
+    color: rgb(77, 65, 23);
+    border-bottom: rgb(77, 65, 23) 1px solid;
+}
+
+
