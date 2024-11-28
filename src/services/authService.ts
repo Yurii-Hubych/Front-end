@@ -33,12 +33,27 @@ const authService = {
 
     login: async (credentials: ILoginCredentials): Promise<boolean> => {
         try {
-            const response = await axiosInstance.post<IToken>("/auth/login", credentials);
+            const response = await axiosInstance.post<IToken>("/auth/login", credentials, {withCredentials: true});
             const tokenPayload = jwtDecode(response.data.accessToken);
             localStorage.setItem('tokenPair', JSON.stringify(response.data));
             localStorage.setItem("userInfo", JSON.stringify(tokenPayload));
 
             return !!(response.data.accessToken && response.data.refreshToken);
+        }
+        catch (e) {
+            const error = e as AxiosError<IApiErrorResponse>;
+            toastError(error);
+            return false;
+        }
+    },
+
+    validateAccessToken: async (): Promise<boolean> => {
+        try {
+            const response = await axiosInstance.post("/auth/validate-access-token");
+            if (response.status === 200) {
+                return true;
+            }
+            return false;
         }
         catch (e) {
             const error = e as AxiosError<IApiErrorResponse>;

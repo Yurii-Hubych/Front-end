@@ -6,6 +6,7 @@ import {IToken} from "../models/IToken.ts";
 import {IEmployee} from "../models/IEmployee.ts";
 import {UpdateEmployeeInfo} from "../custom-types/Employee.type.ts";
 import {configs} from "../configs/configs.ts";
+import Cookies from "js-cookie"
 
 //TODO return localhost
 const axiosInstance = axios.create({
@@ -48,7 +49,20 @@ const employeeService = {
 
     searchForEmployees: async (queryParam: string): Promise<IEmployee[]> => {
         try {
-            const response = await axiosInstance.get(`/employee/search?query=${queryParam}`);
+            const response = await axiosInstance.get(`/employee?query=${queryParam}`, {withCredentials: true});
+            console.log(Cookies.get("refreshToken"));
+            return response.data;
+        }
+        catch (e) {
+            const error = e as AxiosError<IApiErrorResponse>;
+            toastError(error);
+            return Promise.reject(error);
+        }
+    },
+
+    getEmployeesWithoutDepartment: async (): Promise<IEmployee[]> => {
+        try {
+            const response = await axiosInstance.get("/employee?withDepartment=false");
             return response.data;
         }
         catch (e) {

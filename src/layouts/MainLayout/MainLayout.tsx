@@ -20,5 +20,5 @@ const MainLayout:FC = () => {
         </div>
     );
 };
-const mainLayout = withAuthAndRoleRequired(["manager"])(MainLayout);
+const mainLayout = withAuthAndRoleRequired(["manager", "admin"])(MainLayout);
 export default mainLayout;

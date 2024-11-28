@@ -13,7 +13,7 @@ const initialState: EmployeesSlice = {
     employees: []
 }
 
-const loadEmployees = createAsyncThunk<IEmployee[], void, {rejectValue: string}>(
+const loadEmployees = createAsyncThunk<IEmployee[], void, { rejectValue: string }>(
     "employees/loadEmployees",
     async (_, ThunkAPI) => {
         try {
@@ -25,7 +25,19 @@ const loadEmployees = createAsyncThunk<IEmployee[], void, {rejectValue: string}>
         }
     });
 
-const searchForEmployees = createAsyncThunk<IEmployee[], string, {rejectValue: string}>(
+const loadEmployeesWithoutDepartment = createAsyncThunk<IEmployee[], void, { rejectValue: string }>(
+    "employees/loadEmployeesWithoutDepartment",
+    async (_, ThunkAPI) => {
+        try {
+            const response = await employeeService.getEmployeesWithoutDepartment();
+            return ThunkAPI.fulfillWithValue(response)
+        } catch (e) {
+            const error = e as AxiosError<IApiErrorResponse>;
+            return ThunkAPI.rejectWithValue(error.response!.data.message)
+        }
+    });
+
+const searchForEmployees = createAsyncThunk<IEmployee[], string, { rejectValue: string }>(
     "employees/searchForEmployees",
     async (queryParam, ThunkAPI) => {
         try {
@@ -40,8 +52,7 @@ const searchForEmployees = createAsyncThunk<IEmployee[], string, {rejectValue: s
 export const employeesSlice = createSlice({
     name: "employees",
     initialState: initialState,
-    reducers: {
-    },
+    reducers: {},
     extraReducers: builder =>
         builder
             .addCase(loadEmployees.fulfilled, (state, action) => {
@@ -50,10 +61,14 @@ export const employeesSlice = createSlice({
             .addCase(searchForEmployees.fulfilled, (state, action) => {
                 state.employees = action.payload;
             })
+            .addCase(loadEmployeesWithoutDepartment.fulfilled, (state, action) => {
+                state.employees = action.payload;
+            })
 });
 
 export const employeesActions = {
     ...employeesSlice.actions,
     loadEmployees,
-    searchForEmployees
+    searchForEmployees,
+    loadEmployeesWithoutDepartment
 }

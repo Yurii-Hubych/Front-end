@@ -13,5 +13,5 @@ type _position = {
 }
 
 type _department = {
-    name: string;
+    name: string[];
 }

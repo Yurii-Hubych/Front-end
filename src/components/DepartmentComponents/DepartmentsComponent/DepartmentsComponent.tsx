@@ -1,15 +1,20 @@
-import {useAppSelector} from "../../../redux/store.ts";
+import {lazy, Suspense} from "react";
+import {useAppDispatch, useAppSelector} from "../../../redux/store.ts";
 import DepartmentComponent from "../DepartmentComponent/DepartmentComponent.tsx";
 import {IDepartment} from "../../../models/IDepartment.ts";
 import {CiCirclePlus, CiSearch} from "react-icons/ci";
 import {IoFilter} from "react-icons/io5";
-import styles from "./DepartmentsComponent.module.css"
+import styles from "./DepartmentsComponent.module.css";
 import {useForm} from "react-hook-form";
-import {useState} from "react";
-import UpdateDepartmentInfoComponent from "../UpdateDepartmentInfoComponent/UpdateDepartmentInfoComponent.tsx";
-import ManageDepartmentEmployeesComponent
-    from "../ManageDepartmentEmployeesComponent/ManageDepartmentEmployeesComponent.tsx";
-import CreateDepartmentComponent from "../CreateDepartmentComponent/CreateDepartmentComponent.tsx";
+import {useDepartmentModals} from "../../../customHooks/UseDepartmentModals.tsx";
+import {departmentService} from "../../../services/departmentService.ts";
+import {departmentActions} from "../../../redux/slices/departmentSlice.ts";
+import LoadingComponent from "../../Loading/LoadingComponent.tsx";
+
+const UpdateDepartmentInfoComponent = lazy(() => import("../UpdateDepartmentInfoComponent/UpdateDepartmentInfoComponent.tsx"));
+const AddEmployeesToDepartmentComponent = lazy(() => import("../AddEmployeesToDepartmentComponent/AddEmployeesToDepartmentComponent.tsx"));
+const CreateDepartmentComponent = lazy(() => import("../CreateDepartmentComponent/CreateDepartmentComponent.tsx"));
+const RemoveEmployeesFromDepartmentComponent = lazy(() => import("../RemoveEmployeesFromDepartmentComponent/RemoveEmployeesFromDepartmentComponent.tsx"));
 
 type SearchFormData = {
     search: string;
@@ -17,44 +22,33 @@ type SearchFormData = {
 
 const DepartmentsComponent = () => {
 
-    //TODO move hard logic to redux and page
+    //TODO move hard logic to and page
     //TODO add pagination
-    const {departments} = useAppSelector(state => state.departmentsSlice)
+    const {departments} = useAppSelector(state => state.departmentsSlice);
+    const dispatch = useAppDispatch();
 
-    const [isUpdateDepartmentInfoVisible, setIsUpdateDepartmentInfoVisible] = useState<boolean>(false);
-    const [isManageEmployeesVisible, setIsManageEmployeesVisible] = useState<boolean>(false);
-    const [isCreateDepartmentVisiable, setIsCreateDepartmentVisiable] = useState<boolean>(false)
-    const [selectedDepartment, setSelectedDepartment] = useState<IDepartment | null>(null);
+    const {modals, selectedDepartment, openModal, closeModal} = useDepartmentModals();
+    const {register, handleSubmit} = useForm<SearchFormData>();
 
-    const updateEmployeeFormOpeningHandler = (departmentId:string) => {
-        setSelectedDepartment(departments.find(department => department._id === departmentId) || null);
-        setIsUpdateDepartmentInfoVisible(true);
-    }
+    const handleDeleteDepartment = async (departmentId: string) => {
+        await departmentService.deleteDepartment(departmentId);
+        dispatch(departmentActions.loadDepartments());
+    };
 
-    const handleManageEmployeesOpening = (departmentId:string) => {
-        setSelectedDepartment(departments.find(department => department._id === departmentId) || null);
-        setIsManageEmployeesVisible(true);
-    }
-
-    const {
-        register,
-        handleSubmit
-    } = useForm<SearchFormData>()
-
-    const onSubmit = (formData: SearchFormData) => {
-        console.log(formData);
-        //TODO: Implement search functionality
-    }
-
+    //TODO: Implement search functionality
     //TODO Single Department Component
 
+    const handleSearch = (data: { search: string }) => {
+        console.log("Search query:", data.search);
+        // Add search logic here
+    };
 
     return (
         <div>
             <span className={styles["department-header"]}>
                 <h1>Departments</h1>
 
-                <button onClick={() => setIsCreateDepartmentVisiable(true)}>
+                <button onClick={() => openModal("createDepartment", null)}>
                     <CiCirclePlus/>
                     <span>
                         New Department
@@ -63,7 +57,7 @@ const DepartmentsComponent = () => {
             </span>
             <div className={styles["search-filters-bar"]}>
                 <span className={styles["search-input"]}>
-                    <form action="" onSubmit={handleSubmit(onSubmit)} className={styles["search-input-form"]}>
+                    <form action="" onSubmit={handleSubmit(handleSearch)} className={styles["search-input-form"]}>
                         <CiSearch/>
                         <input type="text" {...register("search")} placeholder={"Search for departments by name"}/>
                     </form>
@@ -75,25 +69,42 @@ const DepartmentsComponent = () => {
             </div>
 
             <div className={styles["departments-container"]}>
-                {departments.map((department: IDepartment) => <DepartmentComponent handleManageEmployeesOpening={handleManageEmployeesOpening} handleUpdateFormOpening={updateEmployeeFormOpeningHandler} department={department}
-                                                                                   key={department._id}/>)}
+                {departments.map((department: IDepartment) => <DepartmentComponent
+                    key={department._id}
+                    department={department}
+                    onDelete={handleDeleteDepartment}
+                    onOpenUpdateForm={() => openModal("updateDepartmentInfo", department)}
+                    onOpenAddEmployees={() => openModal("addEmployees", department)}
+                    onOpenRemoveEmployees={() => openModal("removeEmployees", department)}
+                />)
+                }
             </div>
 
-            {isUpdateDepartmentInfoVisible &&
-                <UpdateDepartmentInfoComponent department={selectedDepartment} setIsFormVisible={setIsUpdateDepartmentInfoVisible}/>
-            }
-
-            {
-                isManageEmployeesVisible &&
-                <ManageDepartmentEmployeesComponent department={selectedDepartment} setIsFormVisible={setIsManageEmployeesVisible}/>
-            }
-
-            {
-                isCreateDepartmentVisiable &&
-                <CreateDepartmentComponent setIsFormVisible={setIsCreateDepartmentVisiable}/>
-            }
+            <Suspense fallback={<LoadingComponent/>}>
+                {modals.updateDepartmentInfo && (
+                    <UpdateDepartmentInfoComponent
+                        department={selectedDepartment}
+                        onClose={() => closeModal("updateDepartmentInfo")}
+                    />
+                )}
+                {modals.addEmployees && (
+                    <AddEmployeesToDepartmentComponent
+                        department={selectedDepartment}
+                        onClose={() => closeModal("addEmployees")}
+                    />
+                )}
+                {modals.removeEmployees && (
+                    <RemoveEmployeesFromDepartmentComponent
+                        department={selectedDepartment}
+                        onClose={() => closeModal("removeEmployees")}
+                    />
+                )}
+                {modals.createDepartment && (
+                    <CreateDepartmentComponent onClose={() => closeModal("createDepartment")} />
+                )}
+            </Suspense>
         </div>
-    );
+    )
 };
 
 export default DepartmentsComponent;

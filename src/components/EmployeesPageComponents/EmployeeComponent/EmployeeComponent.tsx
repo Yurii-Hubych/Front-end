@@ -17,8 +17,8 @@ const EmployeeComponent: FC<IProps> = ({employee, handleUpdateFormOpening}) => {
     const dispatch = useAppDispatch();
 
     const MAX_VISIBLE_ROLES = 2;
-    const visibleRoles = employee.roles.slice(0, MAX_VISIBLE_ROLES);
-    const hiddenRoleCount = employee.roles.length - visibleRoles.length;
+    const visibleRoles = employee.roles?.slice(0, MAX_VISIBLE_ROLES);
+    const hiddenRoleCount = employee.roles?.length - visibleRoles?.length;
     const userInfo = useAuth();
 
     const [isActionsVisible, setIsActionsVisible] = useState<boolean>(false);
@@ -51,13 +51,12 @@ const EmployeeComponent: FC<IProps> = ({employee, handleUpdateFormOpening}) => {
                 <div className={styles.employeeInfo}>
                     <div>
                         <p>{`${employee.name} ${employee.surname}`}</p>
-                        {/*<span>{employee.email}email</span>*/}
                     </div>
                 </div>
             </td>
             <td>#{employee._id}</td>
             <td><span>{employee._position?.name}</span></td>
-            <td>{employee._department?.name}</td>
+            <td>{employee._department?.name.map((departmentName) => <span>{departmentName} </span>)}</td>
             {/*<td className={styles["roles"]}>{employee.roles.map((role, index) =>
                     <span className={styles["role"]} key={index}>{role}</span>)}
                 </td>*/}

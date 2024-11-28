@@ -1,12 +1,21 @@
-import axios from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {IToken} from "../models/IToken.ts";
 import {retriveLocalStorageData} from "./helpers/retrieveLocalStorageData.ts";
-import {IDepartmentForCreation} from "../models/IDepartment.ts";
+import {IDepartment, IDepartmentForCreation} from "../models/IDepartment.ts";
 import {configs} from "../configs/configs.ts";
+import {IApiErrorResponse} from "../models/IApiErrorResponse.ts";
+import {toastError} from "../errors/ToastError.ts";
 
+const departmentEndpoints = {
+    getAllDepartments: "/department",
+    removeMembers: (id: string) => `/department/${id}/removeMembers`,
+    updateInfo: (id: string) => `/department/${id}`,
+    createDepartment: "/department",
+    addMembers: (id: string) => `/department/${id}/addMembers`,
+    deleteDepartment: (id: string) => `/department/${id}`
+}
 
 const axiosInstance = axios.create({
-    //TODO change this to the actual API URL
     baseURL: configs.apiGateway,
     headers: {
         "Content-Type": "application/json"
@@ -17,48 +26,40 @@ axiosInstance.interceptors.request.use(request => {
     const tokenPair: IToken = retriveLocalStorageData("tokenPair");
     request.headers.Authorization = `${tokenPair.accessToken}`;
     return request;
-})
+});
+
+const safeRequest = async <T, >(apiCall: () => Promise<T>): Promise<T> => {
+    try {
+        return (await apiCall() as AxiosResponse).data;
+    } catch (e) {
+        const error = e as AxiosError<IApiErrorResponse>;
+        toastError(error);
+
+        if (Array.isArray([] as T)) {
+            return [] as T;
+        }
+
+        throw error;
+    }
+}
 
 const departmentService = {
-    getAll: async () => {
-        try {
-            const response = await axiosInstance.get("/department/withMembers");
-            return response.data;
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-    },
+    getAll: () => safeRequest<IDepartment[]>(() => axiosInstance.get(departmentEndpoints.getAllDepartments)),
 
-    updateDepartmentInfo: async (departmentId: string, {name}: {name: string}) => {
-        try {
-            const response = await axiosInstance.patch(`/department/${departmentId}`, {name});
-            return response.data;
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-    },
+    removeDepartmentMembers: async (departmentId: string, members: string[]) =>
+        safeRequest<void>(() => axiosInstance.patch(departmentEndpoints.removeMembers(departmentId), members)),
 
-    createDepartment: async (data: IDepartmentForCreation) => {
-        try {
-            const response = await axiosInstance.post("/department", data);
-            return response.data;
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-    },
+    updateDepartmentInfo: async (departmentId: string, {name}: { name: string }) =>
+        safeRequest<void>(() => axiosInstance.patch(departmentEndpoints.updateInfo(departmentId), {name})),
 
-    updateDepartmentMembers: async (departmentId: string, members: string[]) => {
-        try {
-            const response = await axiosInstance.patch(`/department/${departmentId}/addMembers`, members);
-            return response.data;
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-    }
+    createDepartment: async (data: IDepartmentForCreation) =>
+        safeRequest<void>(() => axiosInstance.post(departmentEndpoints.createDepartment, data)),
+
+    addDepartmentMembers: async (departmentId: string, members: string[]) =>
+        safeRequest<void>(() => axiosInstance.patch(departmentEndpoints.addMembers(departmentId), members)),
+
+    deleteDepartment: async (departmentId: string) =>
+        safeRequest<void>(() => axiosInstance.delete(departmentEndpoints.deleteDepartment(departmentId))),
 }
 
 export {

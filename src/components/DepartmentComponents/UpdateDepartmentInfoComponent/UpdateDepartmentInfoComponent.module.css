@@ -95,9 +95,10 @@
 .employees-section {
     display: flex;
     flex-direction: column;
-    width: 70%;
+    width: 90%;
+    padding: 5px;
     height: 100%;
-    border: black 1px solid;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
     min-height: 200px;
 }
 

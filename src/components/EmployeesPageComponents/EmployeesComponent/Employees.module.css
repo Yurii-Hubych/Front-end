@@ -123,8 +123,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     max-width: calc(75vw + 2px);
-    margin: 10px auto 0 auto;
+    margin: 10px auto 200px auto;
     z-index: 1;
     overflow: visible;
 }
@@ -164,4 +165,9 @@
 
 .employeeTable th:last-child {
     border-top-right-radius: 10px;
+}
+
+.table-navigation {
+    margin-top: 40px;
+    width: 40%;
 }

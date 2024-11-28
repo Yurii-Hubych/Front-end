@@ -14,12 +14,12 @@ import {IDepartmentForCreation} from "../../../models/IDepartment.ts";
 import useAuth from "../../../customHooks/useAuth.tsx";
 
 type IProps = {
-    setIsFormVisible: (isVisible: boolean) => void;
+    onClose: () => void;
 }
 
 
 
-const CreateDepartmentComponent:FC<IProps> = ({setIsFormVisible}) => {
+const CreateDepartmentComponent:FC<IProps> = ({onClose}) => {
     const {
         register,
         handleSubmit,
@@ -36,7 +36,7 @@ const CreateDepartmentComponent:FC<IProps> = ({setIsFormVisible}) => {
         if (!userInfo) return;
         data._adminUser = userInfo?._id;
         await departmentService.createDepartment(data);
-        setIsFormVisible(false);
+        onClose();
         dispatch(departmentActions.loadDepartments());
     };
 
@@ -51,7 +51,7 @@ const CreateDepartmentComponent:FC<IProps> = ({setIsFormVisible}) => {
 
                 <div className={styles["form-buttons"]}>
                     <button type={"submit"}>Save</button>
-                    <button onClick={() => setIsFormVisible(false)}>Cancel</button>
+                    <button onClick={() => onClose()}>Cancel</button>
                 </div>
             </form>
         </div>

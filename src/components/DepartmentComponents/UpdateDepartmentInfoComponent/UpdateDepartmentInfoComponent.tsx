@@ -13,10 +13,10 @@ import {departmentService} from "../../../services/departmentService.ts";
 
 type IProps = {
     department: IDepartment | null;
-    setIsFormVisible: (isVisible: boolean) => void;
+    onClose: () => void;
 }
 
-const UpdateDepartmentInfoComponent: FC<IProps> = ({department, setIsFormVisible}) => {
+const UpdateDepartmentInfoComponent: FC<IProps> = ({department, onClose}) => {
 
     const {
         register,
@@ -32,7 +32,7 @@ const UpdateDepartmentInfoComponent: FC<IProps> = ({department, setIsFormVisible
 
     const handleUpdateDepartmentSubmit = async (data: UpdateEmployeeInfo) => {
         await departmentService.updateDepartmentInfo(department!._id, data)
-        setIsFormVisible(false);
+        onClose();
         dispatch(departmentActions.loadDepartments());
     };
 
@@ -47,7 +47,7 @@ const UpdateDepartmentInfoComponent: FC<IProps> = ({department, setIsFormVisible
 
                 <div className={styles["form-buttons"]}>
                     <button type={"submit"}>Save</button>
-                    <button onClick={() => setIsFormVisible(false)}>Cancel</button>
+                    <button onClick={() => onClose()}>Cancel</button>
                 </div>
             </form>
         </div>

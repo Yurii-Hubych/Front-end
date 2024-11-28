@@ -7,7 +7,7 @@ import {authService} from "../services/authService.ts";
 import {useAppDispatch} from "../redux/store.ts";
 import {userNotificationsActions} from "../redux/slices/userNotificationsSlice.ts";
 
-const WithAuthRequired = (requiredRoles: [string]) => <T extends object>(Component: FC<T>): FC<T> => {
+const WithAuthRequired = (requiredRoles: string[]) => <T extends object>(Component: FC<T>): FC<T> => {
     const AuthWrapper: FC<T> = (props: T) => {
         const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
         const [isLoading, setIsLoading] = useState(true);

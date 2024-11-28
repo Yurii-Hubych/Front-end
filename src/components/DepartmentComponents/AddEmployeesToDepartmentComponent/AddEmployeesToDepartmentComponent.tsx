@@ -13,13 +13,13 @@ import {departmentService} from "../../../services/departmentService.ts";
 
 type IProps = {
     department: IDepartment | null;
-    setIsFormVisible: (isVisible: boolean) => void;
+    onClose: () => void;
 }
 
-const ManageDepartmentEmployeesComponent:FC<IProps> = ({department, setIsFormVisible}) => {
+const AddEmployeesToDepartmentComponent:FC<IProps> = ({department, onClose}) => {
 
     useEffect(() => {
-        dispatch(employeesActions.loadEmployees());
+        dispatch(employeesActions.loadEmployeesWithoutDepartment());
     }, []);
 
     const {
@@ -35,8 +35,8 @@ const ManageDepartmentEmployeesComponent:FC<IProps> = ({department, setIsFormVis
     const [selectedEmployees, setSelectedEmployees] = useState<IEmployee[]>([]);
 
     const handleManageDepartmentEmployeesSubmit = async () => {
-        await departmentService.updateDepartmentMembers(department!._id, selectedEmployees.map(emp => emp._id));
-        setIsFormVisible(false);
+        await departmentService.addDepartmentMembers(department!._id, selectedEmployees.map(emp => emp._id));
+        onClose();
         dispatch(departmentActions.loadDepartments());
     };
 
@@ -72,15 +72,16 @@ const ManageDepartmentEmployeesComponent:FC<IProps> = ({department, setIsFormVis
                             })}
                         </ul>
                     }
+                    {employees.length === 0 && <span>No employees are available</span>}
                 </div>
 
                 <div className={styles["form-buttons"]}>
                     <button type={"submit"}>Save</button>
-                    <button onClick={() => setIsFormVisible(false)}>Cancel</button>
+                    <button onClick={() => onClose()}>Cancel</button>
                 </div>
             </form>
         </div>
     );
 };
 
-export default ManageDepartmentEmployeesComponent;
+export default AddEmployeesToDepartmentComponent;

@@ -4,11 +4,21 @@ import styles from "./DepartmentComponent.module.css"
 
 type IProps = {
     department: IDepartment;
-    handleUpdateFormOpening: (departmentId: string) => void;
-    handleManageEmployeesOpening: (departmentId: string) => void;
+    onDelete: (departmentId: string) => void;
+    onOpenUpdateForm: (departmentId: string) => void;
+    onOpenAddEmployees: (departmentId: string) => void;
+    onOpenRemoveEmployees: (departmentId: string) => void;
 }
 
-const DepartmentComponent:FC<IProps> = ({department, handleUpdateFormOpening, handleManageEmployeesOpening}) => {
+const DepartmentComponent: FC<IProps> = (
+    {
+        department,
+        onDelete,
+        onOpenUpdateForm,
+        onOpenAddEmployees,
+        onOpenRemoveEmployees,
+    }) => {
+
     return (
         <div className={styles["department-container"]}>
             <div className={styles["department-header"]}>
@@ -35,10 +45,12 @@ const DepartmentComponent:FC<IProps> = ({department, handleUpdateFormOpening, ha
                     <p>No members in this department</p>
                 )}
             </div>
-            
+
             <div className={styles["management-section"]}>
-                <button onClick={() => handleManageEmployeesOpening(department._id)}><span>Manage employees</span></button>
-                <button onClick={() => handleUpdateFormOpening(department._id)}><span>Update information</span></button>
+                <button onClick={() => onOpenAddEmployees(department._id)}>Add Employee</button>
+                <button onClick={() => onOpenRemoveEmployees(department._id)}>Remove Employee</button>
+                <button onClick={() => onOpenUpdateForm(department._id)}>Update Info</button>
+                <button onClick={() => onDelete(department._id)}>Delete Department</button>
             </div>
         </div>
     );

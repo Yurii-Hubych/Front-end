@@ -1,12 +1,12 @@
 import {IEmployee} from "./IEmployee.ts";
 
-type IEmployeeForDepartment = Omit<IEmployee, "_department" | "_position">
+type IDepartmentEmployee = Omit<IEmployee, "_department" | "_position">
 
-export interface IDepartment extends  IEmployeeForDepartment{
+export interface IDepartment extends  IDepartmentEmployee{
     _id: string;
     name: string;
-    members: IEmployeeForDepartment[];
-    _adminUser: IEmployeeForDepartment;
+    members: IDepartmentEmployee[];
+    _adminUser: IDepartmentEmployee;
 }
 
 export type IDepartmentForCreation = Pick<IDepartment, "name"> & {

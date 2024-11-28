@@ -1,7 +1,6 @@
 import {FC, useState} from "react";
 import {IEmployee} from "../../../models/IEmployee.ts";
 import {useAppDispatch, useAppSelector} from "../../../redux/store.ts";
-import EmployeeComponent from "../EmployeeComponent/EmployeeComponent.tsx";
 import styles from "./Employees.module.css"
 import {CiCirclePlus, CiSearch} from "react-icons/ci";
 import {useForm} from "react-hook-form";
@@ -9,6 +8,9 @@ import {IoFilter} from "react-icons/io5";
 import UpdateEmployeeComponent from "../UpdateEmployeeComponent/UpdateEmployeeComponent.tsx";
 import {useSearchParams} from "react-router-dom";
 import {employeesActions} from "../../../redux/slices/employeesSlice.ts";
+import {MdNavigateNext} from "react-icons/md";
+import { MdNavigateBefore } from "react-icons/md";
+import EmployeesTable from "./EmployeesTable.tsx";
 
 type SearchFormData = {
     search: string;
@@ -18,6 +20,7 @@ const EmployeesComponent: FC = () => {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
+    //TODO debounce search
     const {
         register,
         handleSubmit
@@ -40,7 +43,6 @@ const EmployeesComponent: FC = () => {
         setSelectedEmployee(employees.find(employee => employee._id === employeeId) || null);
         setIsUpdateFormVisible(true);
     }
-
 
     //TODO Implement search functionality, filter functionality, and new employee functionality
     return (
@@ -67,38 +69,19 @@ const EmployeesComponent: FC = () => {
                     Filter
                 </span>
             </div>
-            {/*<div>
-                {employees.map((employee: IEmployee) => <EmployeeComponent employee={employee} key={employee._id}/>)}
-            </div>*/}
 
             <div className={styles.tableContainer}>
-                <table className={styles.employeeTable}>
-                    <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox"/>
-                        </th>
-                        <th>Name</th>
-                        <th>Employee ID</th>
-                        <th>Position</th>
-                        <th>Department</th>
-                        <th>Roles</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {employees.map((employee: IEmployee) =>
-                        <EmployeeComponent
-                            employee={employee}
-                            handleUpdateFormOpening={updateEmployeeFormOpeningHandler}
-                            key={employee._id}/>)}
-                    </tbody>
-                </table>
+                <EmployeesTable employees={employees} updateEmployeeFormOpeningHandler={updateEmployeeFormOpeningHandler}/>
+                <nav className={styles["table-navigation"]}>
+                    <MdNavigateBefore />
+                    <span>1 2 3 4 5 6 7 8 9</span>
+                    <MdNavigateNext />
+                </nav>
             </div>
             {isUpdateFormVisible && <UpdateEmployeeComponent setIsFormVisible={setIsUpdateFormVisible} employee={selectedEmployee}/>}
         </div>
     );
 };
+//TODO pagination
 
 export default EmployeesComponent;

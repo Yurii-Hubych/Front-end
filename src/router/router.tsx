@@ -10,7 +10,6 @@ import MainLayout from "../layouts/MainLayout/MainLayout.tsx";
 import DepartmentsPage from "../pages/DepartmentsPage.tsx";
 
 const routes: RouteObject[] = [
-    //TODO add secured layout
     {
         path: "/", element: <MainLayout/>, children: [
             {path: "", element: <MainPage/>},
