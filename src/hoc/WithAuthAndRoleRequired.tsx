@@ -1,7 +1,7 @@
 import {FC, useEffect, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {retriveLocalStorageData} from "../services/helpers/retrieveLocalStorageData.ts";
-import {IToken, ITokenPayload} from "../models/IToken.ts";
+import {ITokenPair, ITokenPayload} from "../models/IToken.ts";
 import {jwtDecode} from "jwt-decode";
 import {authService} from "../services/authService.ts";
 import {useAppDispatch} from "../redux/store.ts";
@@ -14,7 +14,7 @@ const WithAuthRequired = (requiredRoles: string[]) => <T extends object>(Compone
         const dispatch = useAppDispatch();
 
         const checkAuth = async () => {
-            const tokenPair = retriveLocalStorageData<IToken>("tokenPair");
+            const tokenPair = retriveLocalStorageData<ITokenPair>("tokenPair");
             if (!tokenPair || !tokenPair.accessToken) {
                 setIsAuthenticated(false);
                 setIsLoading(false);

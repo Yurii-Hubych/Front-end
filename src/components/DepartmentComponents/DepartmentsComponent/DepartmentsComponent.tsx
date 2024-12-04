@@ -9,7 +9,7 @@ import {useForm} from "react-hook-form";
 import {useDepartmentModals} from "../../../customHooks/UseDepartmentModals.tsx";
 import {departmentService} from "../../../services/departmentService.ts";
 import {departmentActions} from "../../../redux/slices/departmentSlice.ts";
-import LoadingComponent from "../../Loading/LoadingComponent.tsx";
+import LoaderComponent from "../../Loader/LoaderComponent.tsx";
 
 const UpdateDepartmentInfoComponent = lazy(() => import("../UpdateDepartmentInfoComponent/UpdateDepartmentInfoComponent.tsx"));
 const AddEmployeesToDepartmentComponent = lazy(() => import("../AddEmployeesToDepartmentComponent/AddEmployeesToDepartmentComponent.tsx"));
@@ -80,7 +80,7 @@ const DepartmentsComponent = () => {
                 }
             </div>
 
-            <Suspense fallback={<LoadingComponent/>}>
+            <Suspense fallback={<LoaderComponent/>}>
                 {modals.updateDepartmentInfo && (
                     <UpdateDepartmentInfoComponent
                         department={selectedDepartment}

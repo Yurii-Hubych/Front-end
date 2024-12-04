@@ -50,7 +50,7 @@ const EmployeeComponent: FC<IProps> = ({employee, handleUpdateFormOpening}) => {
             <td>
                 <div className={styles.employeeInfo}>
                     <div>
-                        <p>{`${employee.name} ${employee.surname}`}</p>
+                        <p>{`${employee.name} ${employee.surname ? employee.surname : ""}`}</p>
                     </div>
                 </div>
             </td>

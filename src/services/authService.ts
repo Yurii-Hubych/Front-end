@@ -2,7 +2,7 @@ import axios, {AxiosError} from "axios";
 import {IAuthRegisterModel} from "../models/IAuthRegisterModel.ts";
 import {ILoginCredentials} from "../models/ILoginCredentials.ts";
 import {jwtDecode} from "jwt-decode";
-import {IToken} from "../models/IToken.ts";
+import {ITokenPair} from "../models/IToken.ts";
 import {IApiErrorResponse} from "../models/IApiErrorResponse.ts";
 import {toastError} from "../errors/ToastError.ts";
 import {configs} from "../configs/configs.ts";
@@ -33,7 +33,7 @@ const authService = {
 
     login: async (credentials: ILoginCredentials): Promise<boolean> => {
         try {
-            const response = await axiosInstance.post<IToken>("/auth/login", credentials, {withCredentials: true});
+            const response = await axiosInstance.post<ITokenPair>("/auth/login", credentials, {withCredentials: true});
             const tokenPayload = jwtDecode(response.data.accessToken);
             localStorage.setItem('tokenPair', JSON.stringify(response.data));
             localStorage.setItem("userInfo", JSON.stringify(tokenPayload));
@@ -64,7 +64,7 @@ const authService = {
 
     refresh: async (refreshToken: string): Promise<boolean> => {
         try {
-            const response = await axiosInstance.post<IToken>("/auth/refresh",
+            const response = await axiosInstance.post<ITokenPair>("/auth/refresh",
                 null,
                 {headers: {Authorization: refreshToken}});
 
@@ -101,6 +101,32 @@ const authService = {
             const error = e as AxiosError<IApiErrorResponse>;
             toastError(error);
             return false;
+        }
+    },
+
+    googleAuthGetCode: async (): Promise<string> => {
+        try {
+            const response = await axiosInstance.get("/auth/google");
+            return response.data;
+        }
+        catch (e) {
+            const error = e as AxiosError<IApiErrorResponse>;
+            toastError(error);
+            return "auth/login"
+        }
+    },
+
+    googleAuthCallback: async (code: string) => {
+        try {
+            const response = await axiosInstance.get<ITokenPair>("/auth/google/callback?code=" + code);
+            const tokenPayload = jwtDecode(response.data.accessToken);
+            localStorage.setItem('tokenPair', JSON.stringify(response.data));
+            localStorage.setItem("userInfo", JSON.stringify(tokenPayload));
+
+            return !!(response.data.accessToken && response.data.refreshToken);
+        } catch (e) {
+            const error = e as AxiosError<IApiErrorResponse>;
+            toastError(error);
         }
     }
 }

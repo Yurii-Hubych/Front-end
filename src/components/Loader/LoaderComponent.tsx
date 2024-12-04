@@ -1,7 +1,7 @@
 import {DNA} from "react-loader-spinner";
-import styles from "./Loading.module.css"
+import styles from "./Loader.module.css"
 
-const LoadingComponent = () => {
+const LoaderComponent = () => {
     return (
         <div className={styles["loaderContainer"]}>
             <DNA
@@ -16,4 +16,4 @@ const LoadingComponent = () => {
     );
 };
 
-export default LoadingComponent;
+export default LoaderComponent;

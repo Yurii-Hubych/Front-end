@@ -1,4 +1,4 @@
-import {FC, useState} from "react";
+import {FC, useCallback, useEffect, useState} from "react";
 import {IEmployee} from "../../../models/IEmployee.ts";
 import {useAppDispatch, useAppSelector} from "../../../redux/store.ts";
 import styles from "./Employees.module.css"
@@ -11,6 +11,8 @@ import {employeesActions} from "../../../redux/slices/employeesSlice.ts";
 import {MdNavigateNext} from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
 import EmployeesTable from "./EmployeesTable.tsx";
+import {debounce} from "lodash"
+
 
 type SearchFormData = {
     search: string;
@@ -23,7 +25,8 @@ const EmployeesComponent: FC = () => {
     //TODO debounce search
     const {
         register,
-        handleSubmit
+        handleSubmit,
+         watch
     } = useForm<SearchFormData>({defaultValues: {search: searchParams.get("search") || ""}});
     const {employees} = useAppSelector(state => state.employeesSlice);
     const dispatch = useAppDispatch();
@@ -44,6 +47,14 @@ const EmployeesComponent: FC = () => {
         setIsUpdateFormVisible(true);
     }
 
+    const debounceSearch = useCallback(debounce((formData: SearchFormData) => onSearchSubmit(formData), 500), []);
+    const searchValue = watch("search")
+
+    useEffect(() => {
+        if (searchValue) debounceSearch({search: searchValue});
+        return () => debounceSearch.cancel();
+    }, [searchValue]);
+
     //TODO Implement search functionality, filter functionality, and new employee functionality
     return (
         <div>
@@ -59,7 +70,7 @@ const EmployeesComponent: FC = () => {
             </span>
             <div className={styles["search-filters-bar"]}>
                 <span className={styles["search-input"]}>
-                    <form action="" onSubmit={handleSubmit(onSearchSubmit)} className={styles["search-input-form"]}>
+                    <form action="" onChange={handleSubmit(debounceSearch)} className={styles["search-input-form"]}>
                         <CiSearch/>
                         <input type="text" {...register("search")} placeholder={"Search for employees by name or ID"}/>
                     </form>

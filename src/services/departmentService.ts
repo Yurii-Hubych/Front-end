@@ -1,5 +1,5 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {IToken} from "../models/IToken.ts";
+import {ITokenPair} from "../models/IToken.ts";
 import {retriveLocalStorageData} from "./helpers/retrieveLocalStorageData.ts";
 import {IDepartment, IDepartmentForCreation} from "../models/IDepartment.ts";
 import {configs} from "../configs/configs.ts";
@@ -23,7 +23,7 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.interceptors.request.use(request => {
-    const tokenPair: IToken = retriveLocalStorageData("tokenPair");
+    const tokenPair: ITokenPair = retriveLocalStorageData("tokenPair");
     request.headers.Authorization = `${tokenPair.accessToken}`;
     return request;
 });

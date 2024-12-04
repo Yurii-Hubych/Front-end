@@ -7,14 +7,18 @@ import {ILoginCredentials} from "../../../models/ILoginCredentials.ts";
 import styles from "./SignInComponent.module.css"
 import generalStyles from "../AuthForm.module.css"
 import InputErrorComponent from "../InputErrorComponent.tsx";
-import {useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import { FaEye } from "react-icons/fa";
 import {useAppDispatch, useAppSelector} from "../../../redux/store.ts";
 import {toastError} from "../../../errors/ToastError.ts";
 import {userNotificationsActions} from "../../../redux/slices/userNotificationsSlice.ts";
 import {toast} from "react-toastify";
 
-const SignInComponent = () => {
+type IProps = {
+    handleGetGoogleCode: () => void;
+}
+
+const SignInComponent:FC<IProps> = ({handleGetGoogleCode}) => {
 
     const {
         handleSubmit,
@@ -26,7 +30,9 @@ const SignInComponent = () => {
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
+
     const [isPasswordSeen, setIsPasswordSeen] = useState<boolean>(false);
+
     useEffect(() => {
         if (accessDenied) {
             toastError("Access denied")
@@ -65,6 +71,8 @@ const SignInComponent = () => {
 
                 <p className={styles["forgot-password-text"]} onClick={() => navigate("/auth/password/forgot")}>Forgot
                     password</p>
+
+                <div style={{cursor:"pointer"}} onClick={handleGetGoogleCode}>google</div>
                 <button type="submit" className={generalStyles["submit-button"]}>Sign in</button>
             </form>
             <div className={generalStyles["form-right-side"]}>

@@ -2,7 +2,7 @@ import axios, {AxiosError} from "axios";
 import {toastError} from "../errors/ToastError.ts";
 import {IApiErrorResponse} from "../models/IApiErrorResponse.ts";
 import {retriveLocalStorageData} from "./helpers/retrieveLocalStorageData.ts";
-import {IToken} from "../models/IToken.ts";
+import {ITokenPair} from "../models/IToken.ts";
 import {IEmployee} from "../models/IEmployee.ts";
 import {UpdateEmployeeInfo} from "../custom-types/Employee.type.ts";
 import {configs} from "../configs/configs.ts";
@@ -17,7 +17,7 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(request => {
-    const tokenPair: IToken = retriveLocalStorageData("tokenPair");
+    const tokenPair: ITokenPair = retriveLocalStorageData("tokenPair");
     request.headers.Authorization = `${tokenPair.accessToken}`;
     return request;
 })
